@@ -1,6 +1,18 @@
 name: build
 
-on: [ push, pull_request ]
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+    inputs:
+      upload_artifact:
+        description: 'Upload artifact to this run? [yes | no]'
+        required: false
+        default: 'no'
 
 jobs:
   build:
@@ -31,6 +43,7 @@ jobs:
         path: gradle.properties
         properties: version
     - name: Upload Artifact
+      if: ${{ contains(github.event.inputs.upload_artifact, 'yes') }}
       env:
         project_version: ${{ steps.read_properties.outputs.value }}
       uses: actions/upload-artifact@v4
